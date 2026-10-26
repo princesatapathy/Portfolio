@@ -1,0 +1,6 @@
+# Cloudflare Pages settings (used by `wrangler pages dev` / `wrangler pages deploy`).
+# Secrets are NOT stored here: set them in the Cloudflare dashboard or in a local .dev.vars file.
+name = "prince-portfolio"
+compatibility_date = "2026-10-01"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = "dist"
