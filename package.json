@@ -28,8 +28,6 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@netlify/functions": "^6.0.3",
-    "@netlify/vite-plugin": "^3.0.1",
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^26.6.5",
     "@types/react": "^19.3.0",
@@ -82,5 +80,8 @@
   "bugs": {
     "url": "https://github.com/princesatapathy/Portfolio/issues",
     "email": "princesatapathywork@gmail.com"
+  },
+  "engines": {
+    "node": ">=20.19"
   }
 }
