@@ -1,0 +1,86 @@
+{
+  "name": "3d_portfolio",
+  "private": true,
+  "version": "1.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "typecheck": "tsc -b --noEmit",
+    "check:contact": "node scripts/check-contact-api.mjs",
+    "send:test-email": "node scripts/send-test-email.mjs",
+    "test:dog": "node --test scripts/dog-rig.test.mjs",
+    "test:dog:page": "node --test scripts/dog-page.test.mjs"
+  },
+  "dependencies": {
+    "@react-spring/three": "^10.1.2",
+    "@react-three/drei": "^10.7.9",
+    "@react-three/fiber": "^9.8.2",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "react-google-recaptcha-v3": "^1.11.0",
+    "react-router-dom": "^7.18.4",
+    "react-vertical-timeline-component": "^4.0.0",
+    "resend": "^6.31.0",
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@netlify/functions": "^6.0.3",
+    "@netlify/vite-plugin": "^3.0.1",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^26.6.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@types/react-vertical-timeline-component": "^3.3.6",
+    "@types/three": "^0.186.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "eslint": "^10.12.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.7",
+    "globals": "^17.13.0",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.71.1",
+    "vite": "^8.3.5",
+    "vite-plugin-pwa": "^2.0.0",
+    "workbox-window": "^7.0.0"
+  },
+  "author": {
+    "name": "Prince Satapathy",
+    "email": "princesatapathywork@gmail.com",
+    "url": "https://github.com/princesatapathy"
+  },
+  "description": "Prince Satapathy's portfolio: a 3D scene built with React and Three.js",
+  "keywords": [
+    "html",
+    "css",
+    "react",
+    "reactjs",
+    "3d",
+    "threejs",
+    "portfolio",
+    "3d portfolio",
+    "3d animations",
+    "modern",
+    "modern ui",
+    "modern ux",
+    "tailwindcss",
+    "javascript",
+    "js",
+    "typescript",
+    "resend"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/princesatapathy/Portfolio.git"
+  },
+  "homepage": "https://github.com/princesatapathy/Portfolio#readme",
+  "bugs": {
+    "url": "https://github.com/princesatapathy/Portfolio/issues",
+    "email": "princesatapathywork@gmail.com"
+  }
+}
