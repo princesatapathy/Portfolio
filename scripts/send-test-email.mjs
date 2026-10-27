@@ -1,4 +1,4 @@
-// Sends ONE real test message through functions/api/contact.ts (the same code Cloudflare runs), using the
+// Sends ONE real test message through worker/index.ts (the same code Cloudflare runs), using the
 // RESEND_API_KEY from a local .env (or .dev.vars) file. Prints only the HTTP status and the API's answer,
 // never the key.
 //   npm run send:test-email
@@ -32,12 +32,11 @@ console.log(`Sending one test message to ${recipient} via Resend...`);
 
 const temporaryDirectory = mkdtempSync(join(tmpdir(), "contact-live-"));
 const bundledFile = join(temporaryDirectory, "contact.mjs");
-buildSync({ entryPoints: ["functions/api/contact.ts"], bundle: true, platform: "node", format: "esm", outfile: bundledFile, logLevel: "silent" });
-const { onRequestPost } = await import(pathToFileURL(bundledFile).href);
+buildSync({ entryPoints: ["worker/index.ts"], bundle: true, platform: "node", format: "esm", outfile: bundledFile, logLevel: "silent" });
+const { default: worker } = await import(pathToFileURL(bundledFile).href);
 
-const response = await onRequestPost({
-  env,
-  request: new Request("http://localhost/api/contact", {
+const response = await worker.fetch(
+  new Request("http://localhost/api/contact", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -48,7 +47,8 @@ const response = await onRequestPost({
       website: "",
     }),
   }),
-});
+  env,
+);
 rmSync(temporaryDirectory, { recursive: true, force: true });
 
 const body = await response.json();

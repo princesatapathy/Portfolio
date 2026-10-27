@@ -1,4 +1,4 @@
-// Behavior check for the contact function (functions/api/contact.ts, run by Cloudflare Pages)
+// Behavior check for the Cloudflare Worker (worker/index.ts) that answers /api/contact,
 // with a mocked network, so no real email is sent.   Run: npm run check:contact
 import { buildSync } from "esbuild";
 import assert from "node:assert/strict";
@@ -10,14 +10,14 @@ import { pathToFileURL } from "node:url";
 const temporaryDirectory = mkdtempSync(join(tmpdir(), "contact-check-"));
 const bundledFile = join(temporaryDirectory, "contact.mjs");
 buildSync({
-  entryPoints: ["functions/api/contact.ts"],
+  entryPoints: ["worker/index.ts"],
   bundle: true,
   platform: "node",
   format: "esm",
   outfile: bundledFile,
   logLevel: "silent",
 });
-const { onRequestPost, onRequest } = await import(pathToFileURL(bundledFile).href);
+const { default: worker } = await import(pathToFileURL(bundledFile).href);
 
 const validBody = {
   name: "Ada Lovelace",
@@ -40,14 +40,14 @@ globalThis.fetch = async (url, init) => {
 // Cloudflare hands secrets to the function as `env`; each check builds its own
 let env = {};
 const send = (body) =>
-  onRequestPost({
-    request: new Request("http://localhost/api/contact", {
+  worker.fetch(
+    new Request("http://localhost/api/contact", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     }),
     env,
-  });
+  );
 
 const reset = (newEnv = {}) => {
   env = newEnv;
@@ -109,8 +109,13 @@ assert.ok(networkCalls.some((call) => call.url.includes("resend.com")));
 
 // 7. only POST is allowed on this route
 reset({ RESEND_API_KEY: "re_test" });
-const getResponse = await onRequest({ request: new Request("http://localhost/api/contact", { method: "GET" }), env });
+const getResponse = await worker.fetch(new Request("http://localhost/api/contact", { method: "GET" }), env);
 assert.equal(getResponse.status, 405);
+assert.equal(getResponse.headers.get("Allow"), "POST");
+
+// 8. any other /api path is a clean 404 (the site's own pages are served by Cloudflare's static assets, not this Worker)
+const unknownResponse = await worker.fetch(new Request("http://localhost/api/unknown", { method: "POST" }), env);
+assert.equal(unknownResponse.status, 404);
 
 rmSync(temporaryDirectory, { recursive: true, force: true });
-console.log("contact function: all 7 checks passed");
+console.log("contact worker: all 8 checks passed");

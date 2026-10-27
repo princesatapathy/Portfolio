@@ -1,6 +1,16 @@
-# Cloudflare Pages settings (used by `wrangler pages dev` / `wrangler pages deploy`).
-# Secrets are NOT stored here: set them in the Cloudflare dashboard or in a local .dev.vars file.
-name = "prince-portfolio"
+# Cloudflare Worker settings (used by `npx wrangler deploy`, which Cloudflare runs after `npm run build`).
+# Secrets are NOT stored here: set them in the Cloudflare dashboard (Settings -> Variables and Secrets)
+# or in a local .dev.vars file.
+
+# must match the Worker's name in the Cloudflare dashboard
+name = "portfolio"
+main = "worker/index.ts"
 compatibility_date = "2026-10-01"
 compatibility_flags = ["nodejs_compat"]
-pages_build_output_dir = "dist"
+
+[assets]
+# the built site, served by Cloudflare; unknown paths fall back to index.html (single-page app)
+directory = "./dist"
+not_found_handling = "single-page-application"
+# only these paths run the Worker above; everything else is a static asset
+run_worker_first = ["/api/*"]

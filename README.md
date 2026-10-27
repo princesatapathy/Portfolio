@@ -1,6 +1,6 @@
 # Prince Satapathy | 3D Portfolio
 
-My personal portfolio: a 3D island home page, an About page with my skills and experience, my projects, and a contact page with a small dog that sits and wags its tail when you hover over it. Built with React and Three.js, hosted on Cloudflare Pages.
+My personal portfolio: a 3D island home page, an About page with my skills and experience, my projects, and a contact page with a small dog that sits and wags its tail when you hover over it. Built with React and Three.js, hosted on Cloudflare.
 
 ## What is on the site
 
@@ -41,7 +41,7 @@ Add `--color-scheme dark` for the dusk theme.
 - Tailwind CSS 4
 - Three.js with `@react-three/fiber` and `@react-three/drei`
 - React Router 7
-- Cloudflare Pages (hosting) and a Pages Function for the contact form
+- Cloudflare Workers (hosting, with static assets) and a small Worker for the contact form
 - Resend (email delivery), optional Google reCAPTCHA v3
 
 ## Run it locally
@@ -66,11 +66,11 @@ Open the address it prints (usually http://localhost:5173).
 | `npm run test:dog:page` | Test the dog in the real page; needs `npm run preview` running and Playwright |
 | `npm run send:test-email` | Send one real test message through the contact function (needs a key, see below) |
 
-The dev server does not run the contact function. To try the form with the function locally, build the site and run `npx wrangler pages dev dist`, with the settings below in a `.dev.vars` file.
+The dev server does not run the contact Worker. To try the form with it locally, build the site and run `npx wrangler dev`, with the settings below in a `.dev.vars` file.
 
 ## Contact form setup
 
-The form posts to `functions/api/contact.ts`, a Cloudflare Pages Function, which emails me through Resend. It reads these settings:
+The form posts to `/api/contact`, which is answered by the Worker in `worker/index.ts` and emails me through Resend. It reads these settings:
 
 | Name | Required | Meaning |
 |---|---|---|
@@ -80,19 +80,19 @@ The form posts to `functions/api/contact.ts`, a Cloudflare Pages Function, which
 | `VITE_RECAPTCHA_SITE_KEY` and `RECAPTCHA_SECRET_KEY` | no | Turn on Google reCAPTCHA v3 (set both, or neither). The site key is read at build time. |
 | `RECAPTCHA_MIN_SCORE` | no | Lowest reCAPTCHA score accepted (default `0.5`) |
 
-On Cloudflare, add them under the Pages project's **Settings -> Variables and Secrets**. Locally, put them in a git-ignored `.dev.vars` (for `wrangler`) or `.env` (for `npm run send:test-email`).
+On Cloudflare, add them under the Worker's **Settings -> Variables and secrets**. Locally, put them in a git-ignored `.dev.vars` (for `wrangler`) or `.env` (for `npm run send:test-email`).
 
 ## Deploy
 
 1. Push this repository to GitHub.
-2. In Cloudflare, create a **Pages** project from the repository.
-3. Build command `npm run build`, output directory `dist`.
+2. In Cloudflare, create a **Worker** from the repository (Workers & Pages -> Create -> Import a repository). Its name must match `name` in `wrangler.toml` (`portfolio`).
+3. Build command `npm run build`, deploy command `npx wrangler deploy` (the default).
 4. Add the contact settings above as variables and secrets.
 
 ## Project structure
 
 ```
-functions/api/contact.ts   Cloudflare Pages Function: POST /api/contact
+worker/index.ts            Cloudflare Worker: answers POST /api/contact
 src/
   components/              Navbar, banners, alerts, dusk-sky overlay
   constants/               my name, skills, experience and projects
@@ -101,7 +101,7 @@ src/
   pages/                   Home, About, Projects, Contact
   server/contactHandler.ts the contact form logic (validation, reCAPTCHA, Resend)
 scripts/                   tests and the test-email script
-wrangler.toml              Cloudflare Pages settings (no secrets)
+wrangler.toml              Cloudflare Worker + static assets settings (no secrets)
 ```
 
 ## Need help?
